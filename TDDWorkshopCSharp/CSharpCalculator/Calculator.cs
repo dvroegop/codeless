@@ -12,7 +12,7 @@
                 }
                 else
                 {
-                    return param.Split(",").Select(a => int.Parse(a)).Sum();
+                    return param.Split(",").Select(int.Parse).Sum();
                 }
             }
             catch (Exception ex)
