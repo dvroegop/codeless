@@ -84,6 +84,22 @@ namespace CSharpCalculator.Tests
             act.Should().Throw<InvalidOperationException>().WithMessage($"{valueToAdd} is not a numeric value");
         }
 
+        [Fact]
+        public void ThrowsIfOverflowSum()
+        {
+
+            // Arrange (sut = System Under Test)
+            Calculator sut;
+            
+            string valueToAdd = "2147483647,2147483647";
+            // Act
+            sut = new Calculator();
+
+            Action act = () => sut.Add(valueToAdd);
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>().WithMessage($"Overflow");
+        }
 
     }
 }

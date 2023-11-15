@@ -19,6 +19,10 @@ namespace CSharpCalculator
             {
                 throw new InvalidOperationException();
             }
+            catch (OverflowException ex)
+            {
+                throw new InvalidOperationException();
+            }
 
             return returnValue;
         }
