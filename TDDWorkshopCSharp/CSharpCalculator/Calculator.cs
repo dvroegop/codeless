@@ -34,7 +34,7 @@ namespace CSharpCalculator
             }
             catch (WebException)
             {
-                if(retryCount < 3)
+                if (retryCount <= 3)
                 {
                     retryCount++;
                     Thread.Sleep(retryCount * 1000);

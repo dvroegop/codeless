@@ -173,6 +173,7 @@ namespace CSharpCalculator.Tests
             inputService.SetupSequence(x => x.GetInput())
                 .Throws<WebException>()
                 .Throws<WebException>()
+                .Throws<WebException>()
                 .Returns("12");
 
             // Act
