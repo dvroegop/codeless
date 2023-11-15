@@ -88,12 +88,24 @@ namespace CSharpCalculator.Tests
             string valueToAdd = "1.2,1.2,1.2";
 
             mockService.Setup(p => p.GetInputValue()).Returns(valueToAdd);
-          
+
             Action act = () => sut.Add();
 
             // Assert
             act.Should().Throw<InvalidOperationException>();
         }
-       
+
+        [Fact]
+        public void ShouldRetriesIfServiceFails()
+        {
+            string valueToAdd = "1.2,1.2,1.2";
+
+            mockService.Setup(p => p.GetInputValue()).Throws(new Exception());
+
+            Action act = () => sut.Add();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>();
+        }
     }
 }

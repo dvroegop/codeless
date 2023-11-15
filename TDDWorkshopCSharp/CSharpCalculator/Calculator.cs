@@ -56,7 +56,7 @@ namespace CSharpCalculator
                     callNr++;
                     if (callNr == 4)
                     {
-                        throw;
+                        throw new Exception("3 retries allowed");
                     }
                 }
             }
