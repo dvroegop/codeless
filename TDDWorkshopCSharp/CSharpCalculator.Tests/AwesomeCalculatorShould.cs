@@ -33,5 +33,21 @@ namespace CSharpCalculator.Tests
             // Assert
             value.Should().Be(0);
         }
+
+        [Fact]
+        public void ThrowsIfNullString()
+        {
+
+            // Arrange (sut = System Under Test)
+            Calculator sut;
+
+            // Act
+            sut = new Calculator();
+
+            Action act = () => sut.Add(null);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>().WithMessage("whatever");
+        }
     }
 }
