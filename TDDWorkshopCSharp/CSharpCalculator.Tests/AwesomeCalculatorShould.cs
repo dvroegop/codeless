@@ -95,6 +95,19 @@ namespace CSharpCalculator.Tests
             result.Should().Be(15);
         }
         [Fact]
+        public void Return_Sum_Of_The_Passed_More_Than_Two_Values_And_Invalid_Value()
+        {
+
+            // Arrange (sut = System Under Test)
+            Calculator sut;
+
+            // Act
+            sut = new Calculator();
+
+            // Assert
+            Assert.Throws<UnSupportedArgumentsException>(() => { sut.Add("1,2,3,a"); });
+        }
+        [Fact]
         public void Throw_Over_Flow_Exception_If_Result_Becomes_Greater_Than_Max_Value()
         {
 
