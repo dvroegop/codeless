@@ -16,7 +16,7 @@
                 }
                 else
                 {
-                    throw new InvalidCastException($" either {item} is not a valid int number or its value is out of range");
+                    throw new InvalidCastException($"Either {item} is not a valid int number or its value is out of range");
                 }
             }
 

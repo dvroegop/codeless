@@ -1,4 +1,6 @@
 using FluentAssertions;
+using Moq;
+using System;
 
 namespace CSharpCalculator.Tests
 {
@@ -19,13 +21,13 @@ namespace CSharpCalculator.Tests
         }
 
         [Theory]
-        [InlineData("")]
-        [InlineData("1,2")]
-        [InlineData("1")]
-        [InlineData("-1")]
-        [InlineData("12345,9875")]
-        [InlineData("12345,9875, 2, 3, 8374,2983, 38, 3746, 348")]
-        public void Add_Should_Return_Valid(string num)
+        [InlineData("", 0)]
+        [InlineData("1,2", 3)]
+        [InlineData("1", 1)]
+        [InlineData("-1", -1)]
+        [InlineData("45,5", 50)]
+        [InlineData("2, 2, 3, 100, 200, 300, 400, 500", 1507)]
+        public void Add_Should_Return_Valid(string num, int expected)
         {
             // Arrange
             Calculator sut = new Calculator();
@@ -34,20 +36,94 @@ namespace CSharpCalculator.Tests
             int result = sut.Add(num);
 
             // Assert
-            Assert.True(result >= 0 || result <= 0);
+            result.Should().Be(expected);
         }
 
         [Theory]
         [InlineData("abc")]
         [InlineData("ab,2")]
-        [InlineData("11999999999999999999999999999999999999999999999999999999")]
-        public void Add_Should_ThrowException(string num)
+        public void Add_Should_ThrowInvalidCastException(string num)
         {
             // Arrange
             Calculator sut = new Calculator();
 
+            // Act
+            Action act = () => sut.Add(num);
+
             // Assert
-            Assert.Throws<InvalidCastException>(() => sut.Add(num));
+            act.Should().Throw<InvalidCastException>();
+        }
+
+        [Fact]
+        public void Add_Should_ReturnResult()
+        {
+            // Arrange
+            Calculator sut = new Calculator();
+            var dataService = new Mock<IDataService>();
+            dataService.Setup(x => x.GetData()).Returns("1,2");
+
+            // Act
+            int result = sut.Add(dataService.Object.GetData());
+
+            // Assert
+            result.Should().Be(3);
+        }
+
+        [Fact]
+        public void Add_Should_PerformRetry()
+        {
+            // Arrange
+            Calculator sut = new Calculator();
+            var dataService = new Mock<IDataService>();
+            dataService.SetupSequence(x => x.GetData())
+                .Returns("")
+                .Returns("")
+                .Returns("1,2");
+            string number = "";
+            int count = 0;
+            while (count < 3)
+            {
+                number = dataService.Object.GetData();
+                if (!string.IsNullOrEmpty(number))
+                {
+                    break;
+                }
+            }
+            // Act
+            int result = sut.Add(number);
+
+            // Assert
+            result.Should().Be(3);
+        }
+
+        [Fact]
+        public void Add_Should_PerformRetryAndFail()
+        {
+            // Arrange
+            Calculator sut = new Calculator();
+            var dataService = new Mock<IDataService>();
+            dataService.SetupSequence(x => x.GetData())
+                .Returns("")
+                .Returns("")
+                .Returns("")
+                .Returns("--");
+
+            string number ="";
+            int count = 0;
+            while (count < 4)
+            {
+                number = dataService.Object.GetData();
+                if(!string.IsNullOrEmpty(number))
+                {
+                    break;
+                }
+            }
+            // Act
+            Action act = () => sut.Add(number);
+            
+
+            // Assert
+            act.Should().Throw<InvalidCastException>();
         }
     }
 }
