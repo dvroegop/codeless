@@ -158,6 +158,25 @@ namespace CSharpCalculator.Tests
             // Assert
             Assert.Throws<WebException>(() => { sut.Add(); });
         }
+        [Fact]
+        public void Add_When_Retries_Count_Less_Than_Max_Limit()
+        {
+
+            // Arrange (sut = System Under Test)
+            Calculator sut;
+            Mock<IInputService> inputService = new Mock<IInputService>();
+            inputService.SetupSequence(x => x.GetInput())
+                .Throws<WebException>()
+                .Throws<WebException>()
+                .Returns("12");
+
+            // Act
+            sut = new Calculator(inputService.Object);
+            var sum = sut.Add();
+
+            // Assert
+            sum.Should().Be(12);
+        }
 
         private IInputService MockInputService(string input)
         {
