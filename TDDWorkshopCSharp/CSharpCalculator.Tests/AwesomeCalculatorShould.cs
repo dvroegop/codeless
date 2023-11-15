@@ -7,7 +7,6 @@ namespace CSharpCalculator.Tests
         [Fact]
         public void BeCreateable()
         {
-
             // Arrange (sut = System Under Test)
             Calculator sut;
 
