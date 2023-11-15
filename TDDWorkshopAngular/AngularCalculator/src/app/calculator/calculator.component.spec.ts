@@ -63,7 +63,7 @@ describe('CalculatorComponent', () => {
 
   });
 
-  it('should throw an exception of the input contain more than 2 numbers comma separated', () => {
+  it('should throw an exception if the input have more than 2 inputs', () => {
     //arrange 
     const input = calculatorSpyObject.getInput.and.returnValue('33,55,44');
 
@@ -75,7 +75,7 @@ describe('CalculatorComponent', () => {
   });
 
 
-  it('should return not a number if two non integers and one integer', () => {
+  it('should throw an exception if any of the input parameters is not a number (fails at first occurence)', () => {
     //arrange 
     calculatorSpyObject.getInput.and.returnValue("ggg,vvv,333");
 

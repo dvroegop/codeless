@@ -33,10 +33,10 @@ export class CalculatorComponent {
 
     const splitNum = input.split(',');
 
-    return this.validateInputsArray(splitNum);
+    return this.sumInputsArray(splitNum);
   }
 
-  private validateInputsArray(splitNum: string[]) {
+  private sumInputsArray(splitNum: string[]) {
     let result = 0;
     for (var i = 0; i < splitNum.length; i++) {
       const parsedVal = parseInt(splitNum[i]);
