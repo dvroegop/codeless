@@ -26,11 +26,8 @@
                             throw new UnSupportedArgumentsException();
                         }
 
-                    case 2:
-                        return SumNumbers(numbers);
-
                     default:
-                        throw new UnSupportedArgumentsException();
+                        return SumNumbers(numbers);
                 }
             }
         }
@@ -42,7 +39,10 @@
             {
                 if (int.TryParse(numbers[i], out int val))
                 {
-                    sum += val;
+                    checked
+                    {
+                        sum += val;
+                    }
                 }
                 else
                 {
