@@ -98,8 +98,6 @@ namespace CSharpCalculator.Tests
         [Fact]
         public void ShouldRetriesIfServiceFails()
         {
-            string valueToAdd = "1.2,1.2,1.2";
-
             mockService.Setup(p => p.GetInputValue()).Throws(new Exception());
 
             Action act = () => sut.Add();
