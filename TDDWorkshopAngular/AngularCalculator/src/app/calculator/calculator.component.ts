@@ -11,16 +11,15 @@ export class CalculatorComponent {
 
     if (input === "") return 0;
 
+
     if (input.indexOf(",") == -1) {
-      return parseInt(input, 10);
-    }
-    else{
-      
+      return parseInt(input);
     }
 
-
-
-    return 0;
+    const splitNum = input.split(',');
+    if (splitNum.length > 2) throw new Error('Only summing 2 inputs is permitted');
+    const result = parseInt(splitNum[0]) + parseInt(splitNum[1]);
+    return result;
   }
 }
 
