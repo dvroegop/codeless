@@ -1,4 +1,6 @@
 using FluentAssertions;
+using Moq;
+using System.Net;
 using Xunit.Sdk;
 
 namespace CSharpCalculator.Tests
@@ -11,9 +13,9 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
-
+            IInputService inputService = MockInputService("");
             // Act
-            sut = new Calculator();
+            sut = new Calculator(inputService);
 
             // Assert
             sut.Should().NotBeNull("we just created an instance.");
@@ -26,10 +28,11 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService("");
 
             // Act
-            sut = new Calculator();
-            var result = sut.Add(string.Empty);
+            sut = new Calculator(inputService);
+            var result = sut.Add();
 
             // Assert
             result.Should().Be(0);
@@ -42,10 +45,11 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService("1");
 
             // Act
-            sut = new Calculator();
-            var result = sut.Add("1");
+            sut = new Calculator(inputService);
+            var result = sut.Add();
 
             // Assert
             result.Should().Be(1);
@@ -58,10 +62,11 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService("1,2");
 
             // Act
-            sut = new Calculator();
-            var result = sut.Add("1,2");
+            sut = new Calculator(inputService);
+            var result = sut.Add();
 
             // Assert
             result.Should().Be(3);
@@ -73,11 +78,12 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService("abc");
 
             // Act
-            sut = new Calculator();
+            sut = new Calculator(inputService);
             // Assert
-            Assert.Throws<UnSupportedArgumentsException>(() => sut.Add("abc"));
+            Assert.Throws<UnSupportedArgumentsException>(() => sut.Add());
         }
 
         [Fact]
@@ -86,10 +92,11 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService("1,2,3,4,5");
 
             // Act
-            sut = new Calculator();
-            var result = sut.Add("1,2,3,4,5");
+            sut = new Calculator(inputService);
+            var result = sut.Add();
 
             // Assert
             result.Should().Be(15);
@@ -100,12 +107,13 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService("1,2,3,a");
 
             // Act
-            sut = new Calculator();
+            sut = new Calculator(inputService);
 
             // Assert
-            Assert.Throws<UnSupportedArgumentsException>(() => { sut.Add("1,2,3,a"); });
+            Assert.Throws<UnSupportedArgumentsException>(() => { sut.Add(); });
         }
         [Fact]
         public void Throw_Over_Flow_Exception_If_Result_Becomes_Greater_Than_Max_Value()
@@ -113,12 +121,13 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService($"{int.MaxValue},1");
 
             // Act
-            sut = new Calculator();;
+            sut = new Calculator(inputService);
 
             // Assert
-            Assert.Throws<OverflowException>(() => { sut.Add($"{int.MaxValue},1"); });
+            Assert.Throws<OverflowException>(() => { sut.Add(); });
         }
         [Fact]
         public void Throw_Over_Flow_Exception_If_Result_Becomes_Less_Than_Min_Value()
@@ -126,12 +135,36 @@ namespace CSharpCalculator.Tests
 
             // Arrange (sut = System Under Test)
             Calculator sut;
+            IInputService inputService = MockInputService($"{int.MinValue},-11");
 
             // Act
-            sut = new Calculator(); ;
+            sut = new Calculator(inputService); ;
 
             // Assert
-            Assert.Throws<OverflowException>(() => { sut.Add($"{int.MinValue},-11"); });
+            Assert.Throws<OverflowException>(() => { sut.Add(); });
+        }
+        [Fact]
+        public void Throw_WebException_When_Retries_Count_Exceeds()
+        {
+
+            // Arrange (sut = System Under Test)
+            Calculator sut;
+            Mock<IInputService> inputService = new Mock<IInputService>();
+            inputService.Setup(x => x.GetInput()).Throws<WebException>();
+
+            // Act
+            sut = new Calculator(inputService.Object);
+
+            // Assert
+            Assert.Throws<WebException>(() => { sut.Add(); });
+        }
+
+        private IInputService MockInputService(string input)
+        {
+            Mock<IInputService> inputService = new Mock<IInputService>();
+            inputService.Setup(x => x.GetInput()).Returns(input);
+
+            return inputService.Object;
         }
     }
 }

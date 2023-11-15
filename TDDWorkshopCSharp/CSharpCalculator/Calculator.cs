@@ -1,9 +1,19 @@
-﻿namespace CSharpCalculator
+﻿using System.Net;
+
+namespace CSharpCalculator
 {
     public class Calculator
     {
-        public int Add(string param)
+        private readonly IInputService _inputService;
+        public Calculator(IInputService inputService) 
         {
+            _inputService = inputService;
+        }
+        public int Add()
+        {
+            
+            string param = GetInput();
+
             ArgumentNullException.ThrowIfNull(param);
 
             if (param == string.Empty)
@@ -13,22 +23,25 @@
             else
             {
                 var numbers = param.Split(",");
-                switch (numbers.Length)
+                return SumNumbers(numbers);
+            }
+        }
+        private string GetInput(int retryCount = 0)
+        {
+            try
+            {
+                 return  _inputService.GetInput();
+            }
+            catch (WebException)
+            {
+                if(retryCount < 3)
                 {
-                    case 1:
-                        int sum;
-                        if (int.TryParse(numbers[0], out sum))
-                        {
-                            return sum;
-                        }
-                        else
-                        {
-                            throw new UnSupportedArgumentsException();
-                        }
-
-                    default:
-                        return SumNumbers(numbers);
+                    retryCount++;
+                    Thread.Sleep(retryCount * 1000);
+                    return GetInput(retryCount);
                 }
+
+                throw;
             }
         }
 
