@@ -37,7 +37,6 @@ namespace CSharpCalculator
                 if (retryCount <= 3)
                 {
                     retryCount++;
-                    Thread.Sleep(retryCount * 1000);
                     return GetInput(retryCount);
                 }
 

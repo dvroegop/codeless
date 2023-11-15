@@ -150,12 +150,8 @@ namespace CSharpCalculator.Tests
             // Arrange (sut = System Under Test)
             Calculator sut;
             Mock<IInputService> inputService = new Mock<IInputService>();
-            inputService.SetupSequence(x => x.GetInput())
-                .Throws<WebException>()
-                .Throws<WebException>()
-                .Throws<WebException>()
-                .Throws<WebException>()
-                .Returns("12");
+            inputService.Setup(x => x.GetInput())
+                .Throws<WebException>();
 
             // Act
             sut = new Calculator(inputService.Object);
