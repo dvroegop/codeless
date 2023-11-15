@@ -1,14 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CalculatorComponent } from './calculator.component';
+import { CalculaterInputService } from './calculater.service';
 
 describe('CalculatorComponent', () => {
   let component: CalculatorComponent;
   let fixture: ComponentFixture<CalculatorComponent>;
 
+  let calculatorSpyObject = jasmine.createSpyObj('CalculaterInputService', ['getInput']);
+  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CalculatorComponent]
+      declarations: [CalculatorComponent],
+      providers: [
+        { provide: CalculaterInputService, useValue: calculatorSpyObject },
+      ]
     });
     fixture = TestBed.createComponent(CalculatorComponent);
     component = fixture.componentInstance;
@@ -21,7 +28,8 @@ describe('CalculatorComponent', () => {
 
   it('should return 0 when empty string is passed', () => {
     //arrange 
-    const input = "";
+    calculatorSpyObject.getInput.and.returnValue('');
+    const input = component.getInput();
 
     //act
     const result = component.add(input);
@@ -34,7 +42,7 @@ describe('CalculatorComponent', () => {
 
   it('should return same value if input dont have comma separated values', () => {
     //arrange 
-    const input = "11";
+    const input = calculatorSpyObject.getInput.and.returnValue('11');
 
     //act
     const result = component.add(input);
@@ -45,7 +53,7 @@ describe('CalculatorComponent', () => {
 
   it('should return addintion of two', () => {
     //arrange 
-    const input = "33,55";
+    const input = calculatorSpyObject.getInput.and.returnValue('33, 55');
 
     //act
     const result = component.add(input);
@@ -55,9 +63,9 @@ describe('CalculatorComponent', () => {
 
   });
 
-  it('should throw an exception of the input contain more than 2 numbers comma separated', () => {
+  it('should throw an exception if the input have more than 2 inputs', () => {
     //arrange 
-    const input = "33,55,44";
+    const input = calculatorSpyObject.getInput.and.returnValue('33,55,44');
 
     //act
     const result = component.add(input);
@@ -67,10 +75,11 @@ describe('CalculatorComponent', () => {
   });
 
 
-  it('should return not a number if two non integers and one integer', () => {
+  it('should throw an exception if any of the input parameters is not a number (fails at first occurence)', () => {
     //arrange 
-    const input = "ggg,vvv,333";
+    calculatorSpyObject.getInput.and.returnValue("ggg,vvv,333");
 
+    const input = 
     //act
     let result;
     try {
@@ -79,7 +88,6 @@ describe('CalculatorComponent', () => {
       //assert
       expect(ex?.message).toEqual("ggg is not a valid number");
     }
-
   });
 
 });
