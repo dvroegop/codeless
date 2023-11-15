@@ -60,13 +60,10 @@ describe('CalculatorComponent', () => {
     const input = "33,55,44";
 
     //act
-    let result;
-    try {
-      result = component.add(input);
-    } catch (ex: any) {
-      //assert
-      expect(ex?.message).toEqual("Only summing 2 inputs is permitted");
-    }
+    const result = component.add(input);
+
+    //assert
+    expect(result).toBe(132);
   });
 
 
@@ -80,7 +77,7 @@ describe('CalculatorComponent', () => {
       result = component.add(input);
     } catch (ex: any) {
       //assert
-      expect(ex?.message).toEqual("Only summing 2 inputs is permitted");
+      expect(ex?.message).toEqual("ggg is not a valid number");
     }
 
   });

@@ -17,9 +17,18 @@ export class CalculatorComponent {
     }
 
     const splitNum = input.split(',');
-    if (splitNum.length > 2) throw new Error('Only summing 2 inputs is permitted');
-    const result = parseInt(splitNum[0]) + parseInt(splitNum[1]);
-    return result;
+    let sum = 0;
+    for(var i=0; i< splitNum.length; i++) {
+      const parsedVal = parseInt(splitNum[i]);
+      if (!isNaN(parsedVal)) {
+        sum += parsedVal;
+      } else {
+        throw new Error(splitNum[i] + ' is not a valid number');
+      }
+        
+    }
+
+    return sum;
   }
 }
 
