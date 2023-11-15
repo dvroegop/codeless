@@ -17,18 +17,22 @@ export class CalculatorComponent {
     }
 
     const splitNum = input.split(',');
-    let sum = 0;
+
+    return this.validateInputsArray(splitNum);
+  }
+
+  private validateInputsArray(splitNum: string[]) {
+    let result = 0;
     for(var i=0; i< splitNum.length; i++) {
       const parsedVal = parseInt(splitNum[i]);
       if (!isNaN(parsedVal)) {
-        sum += parsedVal;
+        result += parsedVal;
       } else {
         throw new Error(splitNum[i] + ' is not a valid number');
       }
-        
+      
     }
-
-    return sum;
+    return result;
   }
 }
 
