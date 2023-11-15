@@ -51,10 +51,10 @@ namespace CSharpCalculator
                 {
                     return service.GetInputValue();
                 }
-                catch (Exception) 
+                catch (Exception)
                 {
                     callNr++;
-                    if(callNr == 4)
+                    if (callNr == 4)
                     {
                         throw;
                     }
