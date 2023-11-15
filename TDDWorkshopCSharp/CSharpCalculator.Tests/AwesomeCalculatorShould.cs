@@ -47,7 +47,23 @@ namespace CSharpCalculator.Tests
             Action act = () => sut.Add(null);
 
             // Assert
-            act.Should().Throw<ArgumentNullException>().WithMessage("whatever");
+            act.Should().Throw<ArgumentNullException>().WithMessage("Null is not valid value");
+        }
+
+        [Fact]
+        public void ThrowsIfUnSupportedArgument()
+        {
+
+            // Arrange (sut = System Under Test)
+            Calculator sut;
+            string valueToAdd = "this is not a number";
+            // Act
+            sut = new Calculator();
+
+            Action act = () => sut.Add(valueToAdd);
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>().WithMessage($"{valueToAdd} is not a numeric value");
         }
     }
 }
