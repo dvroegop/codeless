@@ -17,5 +17,21 @@ namespace CSharpCalculator.Tests
             // Assert
             sut.Should().NotBeNull("we just created an instance.");
         }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("1,2")]
+        [InlineData("1")]
+        public void Add(string num)
+        {
+            // Arrange
+            Calculator sut = new Calculator();
+
+            // Act
+            int result = sut.Add(num);
+
+            // Assert
+            Assert.True(result >= 0);
+        }
     }
 }
