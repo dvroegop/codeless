@@ -1,34 +1,34 @@
 using FluentAssertions;
+using Moq;
+
 
 namespace CSharpCalculator.Tests
 {
     public class AwesomeCalculatorShould
     {
+        Mock<IService> mockService;
+        Calculator sut;
+
+        public AwesomeCalculatorShould()
+        {
+             mockService = new Mock<IService>();
+             sut = new Calculator(mockService.Object);
+
+        }
+
         [Fact]
         public void BeCreateable()
         {
 
-            // Arrange (sut = System Under Test)
-            Calculator sut;
-
-            // Act
-            sut = new Calculator();
-
-            // Assert
             sut.Should().NotBeNull("we just created an instance.");
         }
 
         [Fact]
         public void ReturnZeroIfEmptyString()
         {
+            mockService.Setup(p => p.GetInputValue()).Returns(string.Empty);
 
-            // Arrange (sut = System Under Test)
-            Calculator sut;
-
-            // Act
-            sut = new Calculator();
-
-            int value = sut.Add(string.Empty);
+            int value = sut.Add();
 
             // Assert
             value.Should().Be(0);
@@ -39,14 +39,9 @@ namespace CSharpCalculator.Tests
         [InlineData("1,2", 3)]
         public void ReturnSumOfNumbers(string input, int output)
         {
+            mockService.Setup(p => p.GetInputValue()).Returns(input);
 
-            // Arrange (sut = System Under Test)
-            Calculator sut;
-
-            // Act
-            sut = new Calculator();
-
-            int value = sut.Add(input);
+            int value = sut.Add();
 
             // Assert
             value.Should().Be(output);
@@ -55,51 +50,50 @@ namespace CSharpCalculator.Tests
         [Fact]
         public void ThrowsIfNullString()
         {
+            mockService.Setup(p => p.GetInputValue()).Returns(default(string));
 
-            // Arrange (sut = System Under Test)
-            Calculator sut;
-
-            // Act
-            sut = new Calculator();
-
-            Action act = () => sut.Add(null);
+            Action act = () => sut.Add();
 
             // Assert
-            act.Should().Throw<ArgumentNullException>().WithMessage("Null is not valid value");
+            act.Should().Throw<ArgumentNullException>().WithMessage("Value cannot be null. (Parameter 'input')");
         }
 
         [Fact]
         public void ThrowsIfUnSupportedArgument()
         {
 
-            // Arrange (sut = System Under Test)
-            Calculator sut;
             string valueToAdd = "this is not a number";
-            // Act
-            sut = new Calculator();
 
-            Action act = () => sut.Add(valueToAdd);
+            mockService.Setup(p => p.GetInputValue()).Returns(valueToAdd);
+            Action act = () => sut.Add();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>().WithMessage($"{valueToAdd} is not a numeric value");
+            act.Should().Throw<InvalidOperationException>().WithMessage("Operation is not valid due to the current state of the object.");
+        }
+
+        [Theory]
+        [InlineData("2147483647,2147483647,-2147483647,-2147483647", 0)]
+        public void ShouldBeZero(string input, int output)
+        {
+            mockService.Setup(p => p.GetInputValue()).Returns(input);
+            int value =  sut.Add();
+
+            // Assert
+            value.Should().Be(output);
         }
 
         [Fact]
-        public void ThrowsIfOverflowSum()
+        public void ThrowsIfFloatingNumber()
         {
+            string valueToAdd = "1.2,1.2,1.2";
 
-            // Arrange (sut = System Under Test)
-            Calculator sut;
-            
-            string valueToAdd = "2147483647,2147483647";
-            // Act
-            sut = new Calculator();
-
-            Action act = () => sut.Add(valueToAdd);
+            mockService.Setup(p => p.GetInputValue()).Returns(valueToAdd);
+          
+            Action act = () => sut.Add();
 
             // Assert
-            act.Should().Throw<InvalidOperationException>().WithMessage($"Overflow");
+            act.Should().Throw<InvalidOperationException>();
         }
-
+       
     }
 }
